@@ -2,20 +2,42 @@ const { ValidationError, UniqueConstraintError } = require("sequelize");
 const { Centre } = require("../../db/sequelize")
 const bcript = require('bcrypt');
 
-module.exports = (app) => {
-  app.post('/api/roqya_ci/create_center', (req, res) => {
+const multer  = require('multer')
+const path= require('path');
 
-    bcript.hash(req.body.password, 10)
-      .then(hash => {
+const storage= multer.diskStorage({
+    destination: (req, file, cb) =>{
+        cb(null, "Images");
+    },
+    filename: (req, file, cb) =>{
+      cb(null, Date.now() + path.extname(file.originalname))  
+    }
+})
+const upload = multer({storage: storage})
+
+
+module.exports = (app) => {
+  app.post('/api/roqya_ci/create_center',upload.single('image'), (req, res) => {
+
+    console.log("the filesssss",req.file);
+    console.log("the boooodyyy",req.body);
+
+    const centreINfos= JSON.parse(req.body.data);
+
+    const port = process.env.PORT || 3000
+
+    bcript.hash(centreINfos.password, 10)
+       .then(hash => {
 
         let newCentre = {
-          ...req.body,
+          ...centreINfos,
+          logo: req.file? `http://localhost:${port} /Images/${req.file.filename}`: null,
           password: hash
         };
 
         return Centre.create(newCentre).then(centre => {
           let message = `le centre ${centre.nom} est ajouté`;
-          res.json({ message, data: centre })
+         return res.json({ message, data: centre })
         }).catch(error => {
           if (error instanceof ValidationError) {
            return res.status(404).json({ message: error.message, data: error })

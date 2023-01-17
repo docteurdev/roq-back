@@ -2,7 +2,7 @@ const { ValidationError, UniqueConstraintError } = require("sequelize");
 const { TypeEmpl, Centre, Employe } = require("../../db/sequelize");
 const bcrypt = require('bcrypt');
 
-const multer  = require('multer')
+const multer  = require('multer');
 const path= require('path');
 
 const storage= multer.diskStorage({
@@ -24,10 +24,10 @@ module.exports = (app) => {
           console.log(req.file);
          console.log(centreBody);
 
-        bcrypt.hash(employe.password, 10).then(hash =>{
+        bcrypt.hash(JSON.parse(employe).password, 10).then(hash =>{
             
             let cretedEmplay= {
-               ...employe,
+               ...JSON.parse(employe),
                 image: req.file? `http://localhost:3000/Images/${req.file.filename}`: null,
                password: hash 
             }
