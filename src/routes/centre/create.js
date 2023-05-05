@@ -22,7 +22,7 @@ module.exports = (app) => {
     console.log("the filesssss",req.file);
     console.log("the boooodyyy",req.body);
 
-    const centreINfos= JSON.parse(req.body.data);
+    const centreINfos= req.body;
 
     const port = process.env.PORT || 3000
 
