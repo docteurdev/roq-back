@@ -17,18 +17,18 @@ const upload = multer({ storage: storage })
 
 //  console.log(__basedir);
 module.exports = (app) => {
-    app.post('/api/roqya_ci/create_employe',upload.single('image'), (req, res) => {
+    app.post('/api/roqya_ci/create_employe', (req, res) => {
         let centreBody = req.body;
         let { idCentre, idTypeEmploye, employe } = centreBody;
         let centre, type_employe, newEmploye;
           console.log(req.file);
          console.log(centreBody);
 
-        bcrypt.hash(JSON.parse(employe).password, 10).then(hash =>{
+        bcrypt.hash(employe.password, 10).then(hash =>{
             
             let cretedEmplay= {
-               ...JSON.parse(employe),
-                image: req.file? `http://localhost:3000/Images/${req.file.filename}`: null,
+               ...employe,
+                image:  null,
                password: hash 
             }
 
